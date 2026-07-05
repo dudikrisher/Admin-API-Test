@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exberry Admin API — Reference</title>
+  <meta name="description" content="Exberry Admin API reference: manage instruments, calendars, market participants and operational commands." />
+
+  <!-- ══════════════════════════════════════════════════════════════
+       BRAND TOKENS — the only block your brand team needs to touch.
+       Replace the hex values / font with Exberry's official palette.
+       ══════════════════════════════════════════════════════════════ -->
+  <style>
+    :root {
+      --brand-primary:   #0B1F3A;   /* deep exchange navy — header, sidebar accent   */
+      --brand-accent:    #19C37D;   /* market-green — links, buttons, active states  */
+      --brand-accent-dk: #129B63;   /* accent hover                                  */
+      --brand-font: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+      --brand-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    /* ── Scalar theme mapping (light + dark) ─────────────────────── */
+    .light-mode {
+      --scalar-color-accent: var(--brand-accent-dk);
+      --scalar-button-1: var(--brand-primary);
+      --scalar-button-1-hover: #16305a;
+    }
+    .dark-mode {
+      --scalar-color-accent: var(--brand-accent);
+      --scalar-background-1: #0d1526;
+      --scalar-background-2: #111b30;
+      --scalar-background-3: #16223c;
+    }
+    .light-mode, .dark-mode {
+      --scalar-font: var(--brand-font);
+      --scalar-font-code: var(--brand-mono);
+    }
+
+    /* ── Slim branded header above the reference ─────────────────── */
+    .brand-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 24px;
+      background: var(--brand-primary);
+      font-family: var(--brand-font);
+    }
+    .brand-bar img { height: 26px; display: block; }
+    .brand-bar .divider { width: 1px; height: 18px; background: rgba(255,255,255,.25); }
+    .brand-bar .product { color: #fff; font-size: 14px; font-weight: 600; letter-spacing: .01em; }
+    .brand-bar .env {
+      margin-left: auto;
+      color: var(--brand-accent); font-size: 12px; font-weight: 600;
+      border: 1px solid var(--brand-accent); border-radius: 999px;
+      padding: 2px 10px;
+    }
+    .brand-bar a.support {
+      color: rgba(255,255,255,.75); font-size: 13px; text-decoration: none; margin-left: 16px;
+    }
+    .brand-bar a.support:hover { color: #fff; }
+    @media (max-width: 640px) { .brand-bar a.support { display: none; } }
+  </style>
+</head>
+<body>
+
+  <header class="brand-bar">
+    <!-- Swap for your hosted logo (SVG recommended). Keep height ≈26px. -->
+    <img src="https://exberry.io/wp-content/uploads/exberry-logo-white.svg"
+         alt="Exberry"
+         onerror="this.outerHTML='<span style=&quot;color:#fff;font-weight:700;font-size:16px&quot;>EXBERRY</span>'" />
+    <span class="divider"></span>
+    <span class="product">Admin API</span>
+    <span class="env">Sandbox · v1.58.0</span>
+    <a class="support" href="https://exberry.io" target="_blank" rel="noopener">exberry.io</a>
+  </header>
+
+  <!-- Scalar API Reference -->
+  <script id="api-reference" data-url="./openapi.json"></script>
+  <script>
+    document.getElementById('api-reference').dataset.configuration = JSON.stringify({
+      // Renderer behaviour
+      layout: 'modern',
+      hideDownloadButton: false,
+      searchHotKey: 'k',
+      // Default the Try-It client to the sandbox server
+      servers: undefined,          // use servers from the spec
+      metaData: {
+        title: 'Exberry Admin API — Reference',
+        ogTitle: 'Exberry Admin API'
+      }
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+name: Validate & Deploy API Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'spec/**'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate OpenAPI spec
+        run: npx --yes @apidevtools/swagger-cli@4 validate docs/openapi.json
+
+      # Optional but recommended: breaking-change report vs the previous commit
+      - name: Diff against previous spec (changelog / breaking changes)
+        continue-on-error: true
+        run: |
+          git show HEAD~1:docs/openapi.json > /tmp/prev.json 2>/dev/null || exit 0
+          docker run --rm -v /tmp:/tmp -v $PWD:/work tufin/oasdiff:latest \
+            changelog /tmp/prev.json /work/docs/openapi.json || true
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4

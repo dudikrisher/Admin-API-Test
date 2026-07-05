@@ -1,0 +1,17 @@
+{
+  "info": {
+    "description": "Exberry Admin API allows managing exchange static data (instruments, trading calendars and more) as well as sending operational commands (EOD, halt trading and more).\n\n**Sandbox environment endpoint:** `https://admin-api.uat.exberry-uat.io`\n\n**Guidelines:**\n- All numbers are stringified unless explicitly mentioned otherwise. Stringified integers are marked with pattern `^-?[0-9]+$`; stringified decimals with `format: decimal`.\n- Optional fields should be omitted from request if not required\n- System ignores any additional parameter that are sent on request body but was not specified in this document\n\n**HTTP Error Codes:**\n- 400: Maximum request size exceeded (60KB) or Invalid JSON\n- 401: Invalid token\n- 403: Authentication and authorization errors\n- 404: Route not found\n- 500: Any other error\n- 503: System not available\n- 504: Timeout"
+  },
+  "tags": {
+    "Authentication": "Authenticate with the email and password provided by the Exberry team to receive a JWT token. Use it as a Bearer token on every other request. Regenerate before expiresIn elapses."
+  },
+  "operations": {
+    "Get_Token": {
+      "summary": "Get Token",
+      "description": "Exchanges email + password for a JWT bearer token.\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2 | Wrong email or password |\n| 10000 | Please login to Admin Application before using API |"
+    }
+  },
+  "schema_descriptions": {
+    "Instrument.properties.symbol": "Unique instrument symbol. Max length 16. Allowed characters: a-Z, 0-9, - . ^ = /"
+  }
+}
