@@ -1,8 +1,8 @@
+import json, re, sys, os
 
-import json, re, sys
-
-SRC = '/mnt/user-data/uploads/Exberry_Admin_API_postman_collection.json'
-OUT = sys.argv[1] if len(sys.argv) > 1 else '/mnt/user-data/outputs/exberry_admin_api_openapi_v8.json'
+BASE = os.path.dirname(os.path.abspath(__file__))
+SRC = sys.argv[2] if len(sys.argv) > 2 else os.path.join(BASE, 'Admin_API.postman_collection.json')
+OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(BASE, '..', 'docs', 'openapi.json')
 
 with open(SRC) as f:
     data = json.load(f)
