@@ -1,10 +1,13 @@
 import json, re, sys, os
 
+# Usage: python3 postman_to_openapi_generator.py [output.json] [postman_collection.json]
+# Defaults: reads  <this folder>/Admin_API.postman_collection.json
+#           writes <repo>/docs/openapi.json
 BASE = os.path.dirname(os.path.abspath(__file__))
 SRC = sys.argv[2] if len(sys.argv) > 2 else os.path.join(BASE, 'Admin_API.postman_collection.json')
-OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(BASE, '..', 'docs', 'openapi.json')
+OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.normpath(os.path.join(BASE, '..', 'docs', 'openapi.json'))
 
-with open(SRC) as f:
+with open(SRC, encoding='utf-8') as f:
     data = json.load(f)
 
 INT_STR_PATTERN = r'^-?[0-9]+$'
@@ -502,7 +505,16 @@ def extract(items, chain=(), inherited=None):
 
 endpoints = extract(data.get('item', []))
 
-instr_desc = folder_descs[('Instruments API',)]
+def norm_folder(name):
+    # 'API Key' == 'apiKey' == 'api key' == 'Accounts API' vs 'accounts'
+    return re.sub(r'[^a-z]', '', name.lower())
+
+folder_descs_norm = {tuple(norm_folder(p) for p in k): v for k, v in folder_descs.items()}
+
+def get_folder_desc(*names):
+    return folder_descs_norm.get(tuple(norm_folder(n) for n in names), '')
+
+instr_desc = get_folder_desc('Instruments API')
 components_schemas = {
     "ErrorResponse": {"type": "object", "properties": {"code": {"type": "integer", "description": "Error code"}, "message": {"type": "string", "description": "Error message"}}}
 }
@@ -520,13 +532,13 @@ model_defs = [
     ('Calendar', ('Calendars API',), None),
     ('MarketParticipant', ('MPs API',), None),
     ('Account', ('MPs API', 'Accounts API'), None),
-    ('MpApiKey', ('MPs API', 'API Key'), None),
+    ('MpApiKey', ('MPs API', 'API Key'), None),   # matches 'apiKey', 'API Key', 'Api Key' via normalization
     ('MpGroup', ('MP Groups API',), None),
     ('CircuitBreakerRule', ('CBR API',), None),
     ('TickSizeTable', ('Tick Size API',), None),
 ]
 for comp_name, folder_key, refs in model_defs:
-    desc_text = folder_descs.get(folder_key, '')
+    desc_text = get_folder_desc(*folder_key)
     model = build_model_from_tables(parse_all_tables(desc_text), ref_overrides=refs)
     if model and model.get('properties'):
         components_schemas[comp_name] = model
@@ -755,7 +767,7 @@ openapi["tags"] = [t for t in openapi["tags"] if t["name"] in used_tags]
 import os
 ov_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'spec_overrides.json')
 if os.path.exists(ov_path):
-    ov = json.load(open(ov_path))
+    ov = json.load(open(ov_path, encoding='utf-8'))
     if 'info' in ov:
         openapi['info'].update(ov['info'])
     for tname, tdesc in (ov.get('tags') or {}).items():
@@ -779,6 +791,6 @@ if os.path.exists(ov_path):
 # sort components alphabetically for stable diffs and easy lookup
 openapi['components']['schemas'] = dict(sorted(openapi['components']['schemas'].items()))
 
-with open(OUT, 'w') as f:
-    json.dump(openapi, f, indent=2)
+with open(OUT, 'w', encoding='utf-8') as f:
+    json.dump(openapi, f, indent=2, ensure_ascii=False)
 print(f"written {OUT}")
