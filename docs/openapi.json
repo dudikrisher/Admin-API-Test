@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Exberry Admin API",
-    "version": "1.58.0",
+    "version": "1.58.1",
     "description": "Exberry Admin API allows managing exchange static data (instruments, trading calendars and more) as well as sending operational commands (EOD, halt trading and more).\n\n**Sandbox environment endpoint:** `https://admin-api.uat.exberry-uat.io`\n\n**Guidelines:**\n- All numbers are stringified unless explicitly mentioned otherwise. Stringified integers are marked with pattern `^-?[0-9]+$`; stringified decimals with `format: decimal`.\n- Optional fields should be omitted from request if not required\n- System ignores any additional parameter that are sent on request body but was not specified in this document\n\n**HTTP Error Codes:**\n- 400: Maximum request size exceeded (60KB) or Invalid JSON\n- 401: Invalid token\n- 403: Authentication and authorization errors\n- 404: Route not found\n- 500: Any other error\n- 503: System not available\n- 504: Timeout",
     "contact": {
       "name": "Exberry Support",
@@ -63,7 +63,10 @@
               "Active",
               "Blocked"
             ],
-            "description": "Active \u2014 activity through the account is allowed\nBlocked \u2014 activity through the account is not allowed"
+            "x-enumDescriptions": {
+              "Active": "activity through the account is allowed",
+              "Blocked": "activity through the account is not allowed"
+            }
           }
         },
         "required": [
@@ -143,7 +146,12 @@
                     "Resume",
                     "AutoResume"
                   ],
-                  "description": "When the auction is triggered.\nTimeBased \u2014 default)- for regular auction schedule that is based on date and time (you can have many auctions with that trigger\nResume \u2014 for auctions that will be triggered as a result of manual resume operation by system operator who will click \u201cResume\u201d button, or by scheduled resume (you can have only one auction per calendar with that trigger\nAutoResume \u2014 for auctions that will be triggered as a result of automatic resume operation by system as part of CBR. This can happen in case of a temporary halt that is being configured in Circuit Breaker Rule. (you can have only one auction per calendar with that trigger"
+                  "x-enumDescriptions": {
+                    "TimeBased": "default)- for regular auction schedule that is based on date and time (you can have many auctions with that trigger",
+                    "Resume": "for auctions that will be triggered as a result of manual resume operation by system operator who will click “Resume” button, or by scheduled resume (you can have only one auction per calendar with that trigger",
+                    "AutoResume": "for auctions that will be triggered as a result of automatic resume operation by system as part of CBR. This can happen in case of a temporary halt that is being configured in Circuit Breaker Rule. (you can have only one auction per calendar with that trigger"
+                  },
+                  "description": "When the auction is triggered."
                 },
                 "days": {
                   "type": "array",
@@ -158,7 +166,7 @@
                     "type": "string",
                     "pattern": "^\\d{2}:\\d{2}:\\d{2}$"
                   },
-                  "description": "List of start time for the auction in terms of calendar time zone \nMandatory if trigger = TimeBased \nAuction objects are sorted by ascending order of this field."
+                  "description": "List of start time for the auction in terms of calendar time zone \nMandatory if trigger = TimeBased \n[NEW 1.21.0] Auction objects are sorted by ascending order of this field."
                 },
                 "allowedTimeInForces": {
                   "type": "array",
@@ -183,7 +191,12 @@
                     "EQUILIBRIUM_PRICE",
                     "EQUILIBRIUM_PRICE_2"
                   ],
-                  "description": "Auction matching algorithm,\nPRICE_AND_TIME \u2014 execution based on price and time priority\nEQUILIBRIUM_PRICE \u2014 execution based on single calculated equilibrium price\nEQUILIBRIUM_PRICE_2 \u2014 execution based on single calculated equilibrium price"
+                  "x-enumDescriptions": {
+                    "PRICE_AND_TIME": "execution based on price and time priority",
+                    "EQUILIBRIUM_PRICE": "execution based on single calculated equilibrium price",
+                    "EQUILIBRIUM_PRICE_2": "execution based on single calculated equilibrium price"
+                  },
+                  "description": "Auction matching algorithm,"
                 },
                 "eventsModes": {
                   "type": "array",
@@ -192,9 +205,13 @@
                     "enum": [
                       "LIT",
                       "INDICATIVE_PRICE"
-                    ]
+                    ],
+                    "x-enumDescriptions": {
+                      "LIT": "regular order events",
+                      "INDICATIVE_PRICE": "AuctionIndicativeEP events"
+                    }
                   },
-                  "description": "List of events to be published during auction in `orderBookDepth`:\nLIT \u2014 regular order events\nINDICATIVE_PRICE \u2014 AuctionIndicativeEP events"
+                  "description": "List of events to be published during auction in `orderBookDepth`:"
                 },
                 "duration": {
                   "type": "string",
@@ -295,7 +312,10 @@
               "ACTIVE",
               "DISABLED"
             ],
-            "description": "ACTIVE \u2014 CBR is active\nDISABLED \u2014 CBR is not active"
+            "x-enumDescriptions": {
+              "ACTIVE": "CBR is active",
+              "DISABLED": "CBR is not active"
+            }
           },
           "type": {
             "type": "string",
@@ -305,7 +325,12 @@
               "MARKET_RATE_POTENTIAL_EXECUTION",
               "DYNAMIC_MARKET_RATE_POTENTIAL_EXECUTION"
             ],
-            "description": "MARKET_RATE \u2014 monitor market rate changes since the previous day's close rate or daily settlement price if exists.\nDYNAMIC_MARKET_RATE \u2014 monitor market rate changes since the previous trade rate (last price\nMARKET_RATE_POTENTIAL_EXECUTION \u2014 monitor potential executions that may impact market rate changes since the previous day's close rate or daily settlement price if exists.\nDYNAMIC_MARKET_RATE_POTENTIAL_EXECUTION \u2014 monitor potential executions that may impact market rate changes since the previous trade rate (last price"
+            "x-enumDescriptions": {
+              "MARKET_RATE": "monitor market rate changes since the previous day's close rate or daily settlement price if exists.",
+              "DYNAMIC_MARKET_RATE": "monitor market rate changes since the previous trade rate (last price",
+              "MARKET_RATE_POTENTIAL_EXECUTION": "monitor potential executions that may impact market rate changes since the previous day's close rate or daily settlement price if exists.",
+              "DYNAMIC_MARKET_RATE_POTENTIAL_EXECUTION": "monitor potential executions that may impact market rate changes since the previous trade rate (last price"
+            }
           },
           "value": {
             "type": "number",
@@ -318,11 +343,15 @@
               "NOTIFY_BACKOFFICE",
               "RESUME_AUCTION"
             ],
-            "description": "HALT_TRADING \u2014 halt the trading for the instrument\nNOTIFY_BACKOFFICE \u2014 send notification to Admin users\nRESUME_AUCTION \u2014 will trigger the auto_resume_auction"
+            "x-enumDescriptions": {
+              "HALT_TRADING": "halt the trading for the instrument",
+              "NOTIFY_BACKOFFICE": "send notification to Admin users",
+              "RESUME_AUCTION": "will trigger the auto_resume_auction"
+            }
           },
           "actionValue": {
             "type": "number",
-            "description": "\u201cHALT_TRADING\u201d - If empty - halt the trading for that instrument permanently (can only be resumed manually) Else time in minutes. \n\u201cNOTIFY_BACKOFFICE\u201d - always empty \n`NEW`\u201cRESUME_AUCTION\u201d - always empty"
+            "description": "“HALT_TRADING” - If empty - halt the trading for that instrument permanently (can only be resumed manually) Else time in minutes. \n“NOTIFY_BACKOFFICE” - always empty \n`NEW`“RESUME_AUCTION” - always empty"
           },
           "priority": {
             "type": "integer",
@@ -408,7 +437,11 @@
               "DISABLED",
               "ARCHIVED"
             ],
-            "description": "ACTIVE \u2014 trading allowed\nDISABLED \u2014 Trading not allowed\nARCHIVED \u2014 Can't be used in Create/ Update APIs but only in the Get APIs, for more details see here"
+            "x-enumDescriptions": {
+              "ACTIVE": "trading allowed",
+              "DISABLED": "Trading not allowed",
+              "ARCHIVED": "Can't be used in Create/ Update APIs but only in the Get APIs, for more details see here"
+            }
           },
           "description": {
             "type": "string",
@@ -496,7 +529,7 @@
                 "timestamp": {
                   "type": "integer",
                   "format": "int64",
-                  "description": "Cutoff time for trade reporting of the type defined in the \u2018type\u2019 field. \nInstrument status changed to be Disabled at the latest cutoff. (considering also the stopDate) \nIf not defined, stopDate will be the cutoff time for trade types not defined. \nApplicable to any Trade entry"
+                  "description": "Cutoff time for trade reporting of the type defined in the ‘type’ field. \nInstrument status changed to be Disabled at the latest cutoff. (considering also the stopDate) \nIf not defined, stopDate will be the cutoff time for trade types not defined. \nApplicable to any Trade entry"
                 }
               }
             },
@@ -510,7 +543,13 @@
               "N",
               "X"
             ],
-            "description": "Mandatory if Category = O (option) OR F (Futures) \nDelivery type\nP \u2014 Physical\nC \u2014 Cash\nN \u2014 Non-Deliverable\nX \u2014 Not set"
+            "x-enumDescriptions": {
+              "P": "Physical",
+              "C": "Cash",
+              "N": "Non-Deliverable",
+              "X": "Not set"
+            },
+            "description": "Mandatory if Category = O (option) OR F (Futures) \nDelivery type"
           },
           "contractSize": {
             "type": "string",
@@ -524,7 +563,7 @@
           },
           "priceMultiplier": {
             "type": "number",
-            "description": "Optional \nThe multiplier used to convert quoted per units to Settlement units \nFor example, GOLD 99.99% quoted in USD per oz. price multiplier is applicable to \u201cper oz\u201d part of the definition. \nIf not set, treated as priceMultiplier = 1"
+            "description": "Optional \nThe multiplier used to convert quoted per units to Settlement units \nFor example, GOLD 99.99% quoted in USD per oz. price multiplier is applicable to “per oz” part of the definition. \nIf not set, treated as priceMultiplier = 1"
           },
           "priceUnit": {
             "type": "string",
@@ -548,7 +587,12 @@
               "E",
               "B"
             ],
-            "description": "Mandatory if Category = O (option) \nOption exercise type\nA \u2014 American\nE \u2014 European\nB \u2014 Bermudan"
+            "x-enumDescriptions": {
+              "A": "American",
+              "E": "European",
+              "B": "Bermudan"
+            },
+            "description": "Mandatory if Category = O (option) \nOption exercise type"
           },
           "dailyMinPricePercentage": {
             "type": "number",
@@ -624,7 +668,7 @@
             "items": {
               "type": "integer"
             },
-            "description": "Mandatory if Category = K (Strategies) \nArray of instrument ids of that strategy - sorted so that leg1 is the first leg2 second etc. \n- On spread: 2 legs are required \n- On strips: 2 \u2264 number of legs < 24"
+            "description": "Mandatory if Category = K (Strategies) \nArray of instrument ids of that strategy - sorted so that leg1 is the first leg2 second etc. \n- On spread: 2 legs are required \n- On strips: 2 ≤ number of legs < 24"
           },
           "leg1ReferencePrice": {
             "type": "number",
@@ -636,7 +680,11 @@
               "No",
               "Yes"
             ],
-            "description": "Optional \nApplicable only if Category = K (Strategies)\nNo \u2014 default if not sent\nYes \u2014 System prevents breaching price bands of legs during trades allocation and order entry"
+            "x-enumDescriptions": {
+              "No": "default if not sent",
+              "Yes": "System prevents breaching price bands of legs during trades allocation and order entry"
+            },
+            "description": "Optional \nApplicable only if Category = K (Strategies)"
           },
           "bidAskTickRefPrice": {
             "type": "boolean",
@@ -685,13 +733,17 @@
               "enum": [
                 "CLOB",
                 "RFQ"
-              ]
+              ],
+              "x-enumDescriptions": {
+                "CLOB": "instrument supports Central Limit Order Book",
+                "RFQ": "instrument supports Request For Quote"
+              }
             },
-            "description": "Allowed values in the array\nCLOB \u2014 instrument supports Central Limit Order Book\nRFQ \u2014 instrument supports Request For Quote"
+            "description": "Allowed values in the array"
           },
           "maxRFQExpireTimePeriod": {
             "type": "integer",
-            "description": "Required if tradingModels has \u2018RFQ\u2019. \nMax allowed expiry time for an RFQ in seconds. \nNote: this is the time to maintain RFQ without expiration due to timeout."
+            "description": "Required if tradingModels has ‘RFQ’. \nMax allowed expiry time for an RFQ in seconds. \nNote: this is the time to maintain RFQ without expiration due to timeout."
           },
           "allegedTradeExpireTimePeriod": {
             "type": "integer",
@@ -745,7 +797,23 @@
           "T",
           "M"
         ],
-        "description": "Instrument category.\nE \u2014 Equities\nC \u2014 Collective investment vehicles\nD \u2014 Debt instruments\nR \u2014 Entitlement (rights)\nO \u2014 Listed options\nF \u2014 Futures\nS \u2014 Swaps\nH \u2014 Non-listed and complex listed options\nI \u2014 Spot\nJ \u2014 Forwards\nK \u2014 Strategies\nL \u2014 Financing\nT \u2014 Referential instruments\nM \u2014 Others (miscellaneous)"
+        "x-enumDescriptions": {
+          "E": "Equities",
+          "C": "Collective investment vehicles",
+          "D": "Debt instruments",
+          "R": "Entitlement (rights)",
+          "O": "Listed options",
+          "F": "Futures",
+          "S": "Swaps",
+          "H": "Non-listed and complex listed options",
+          "I": "Spot",
+          "J": "Forwards",
+          "K": "Strategies",
+          "L": "Financing",
+          "T": "Referential instruments",
+          "M": "Others (miscellaneous)"
+        },
+        "description": "Instrument category."
       },
       "InstrumentGroup": {
         "type": "object",
@@ -782,7 +850,16 @@
           "M",
           "B"
         ],
-        "description": "Instrument sub category. Valid values depend on the selected category:\nF \u2014 Foreign exchange (category: Spot)\nT \u2014 Commodities (category: Spot)\nF \u2014 Financial futures (category: Futures)\nC \u2014 Commodities futures (category: Futures)\nN \u2014 Binary Event Contract \nNote: Yes instruments only (category: Futures)\nC \u2014 Call options (category: Listed options)\nP \u2014 Put options (category: Listed options)\nM \u2014 Other (miscellaneous) (category: Listed options)\nB \u2014 Bonds (category: Debt instruments)"
+        "x-enumDescriptions": {
+          "F": "Foreign exchange (category: Spot); Financial futures (category: Futures)",
+          "T": "Commodities (category: Spot)",
+          "C": "Commodities futures (category: Futures); Call options (category: Listed options)",
+          "N": "Binary Event Contract \nNote: Yes instruments only (category: Futures)",
+          "P": "Put options (category: Listed options)",
+          "M": "Other (miscellaneous) (category: Listed options)",
+          "B": "Bonds (category: Debt instruments)"
+        },
+        "description": "Instrument sub category. Valid values depend on the selected category."
       },
       "InstrumentUnderlyingAssets": {
         "type": "string",
@@ -808,7 +885,29 @@
           "V",
           "Z"
         ],
-        "description": "Instrument underlying assets type. Applicability depends on category/subCategory:\nA \u2014 Agriculture\nJ \u2014 Energy\nK \u2014 Metals\nN \u2014 Environmental\nP \u2014 Polypropylene Products\nS \u2014 Fertilizer\nT \u2014 Paper\nM \u2014 Others (Miscellaneous)\nX \u2014 Not Set\nE \u2014 Extraction Resources\nI \u2014 Industrial Products\nS \u2014 Services\nH \u2014 Generated Resources\nM \u2014 Others\nB \u2014 Baskets\nS \u2014 Stock-Equities\nD \u2014 Debt Instruments\nC \u2014 Currencies\nI \u2014 Indices\nO \u2014 Options\nF \u2014 Futures\nW \u2014 Swaps\nN \u2014 Interest Rates\nV \u2014 Stock Dividend\nT \u2014 Commodities\nF \u2014 Fixed Rate\nZ \u2014 Zero Rate/Discounted\nV \u2014 Variable\nC \u2014 Cash Payment\nK \u2014 Payment in Kind"
+        "x-enumDescriptions": {
+          "A": "Agriculture",
+          "J": "Energy",
+          "K": "Metals; Payment in Kind",
+          "N": "Environmental; Interest Rates",
+          "P": "Polypropylene Products",
+          "S": "Fertilizer; Services; Stock-Equities",
+          "T": "Paper; Commodities",
+          "M": "Others (Miscellaneous)",
+          "X": "Not Set",
+          "E": "Extraction Resources",
+          "I": "Industrial Products; Indices",
+          "H": "Generated Resources",
+          "B": "Baskets",
+          "D": "Debt Instruments",
+          "C": "Currencies; Cash Payment",
+          "O": "Options",
+          "F": "Futures; Fixed Rate",
+          "W": "Swaps",
+          "V": "Stock Dividend; Variable",
+          "Z": "Zero Rate/Discounted"
+        },
+        "description": "Instrument underlying assets type. Applicability depends on category/subCategory."
       },
       "MarketParticipant": {
         "type": "object",
@@ -837,7 +936,10 @@
               "Active",
               "Blocked"
             ],
-            "description": "Active \u2014 can trade.\nBlocked \u2014 can't send any order RFQ, Quote and Alleged Trade command"
+            "x-enumDescriptions": {
+              "Active": "can trade.",
+              "Blocked": "can't send any order RFQ, Quote and Alleged Trade command"
+            }
           },
           "selfTradePrevention": {
             "type": "boolean",
@@ -845,7 +947,7 @@
           },
           "selfTradeAction": {
             "type": "string",
-            "description": "One of the below values: \n- CancelIncomingOrder \n- CancelRestingOrder \n- CancelBothOrders \nIf not configured\u2192 STP will work only on order level"
+            "description": "One of the below values: \n- CancelIncomingOrder \n- CancelRestingOrder \n- CancelBothOrders \nIf not configured→ STP will work only on order level"
           },
           "tradeReporting": {
             "type": "string",
@@ -987,7 +1089,7 @@
               "properties": {
                 "price": {
                   "type": "string",
-                  "description": "Price to- use the price when order price \u2264 to this price and > from previous price (this array need to be sorted). \nIf empty this will apply to all order prices above the previous price."
+                  "description": "Price to- use the price when order price ≤ to this price and > from previous price (this array need to be sorted). \nIf empty this will apply to all order prices above the previous price."
                 },
                 "tickSize": {
                   "type": "number",
@@ -1304,7 +1406,7 @@
         "tags": [
           "Instruments"
         ],
-        "description": "This API allows to get a list of all instruments with their details.\n\n#### Get Instruments- Fields\n\n**Example for derivativeInstrumentCategory instrument -**\n\n- InstrumentId: 1,\n    \n- InstrumentId: 2,\n    \n- InstrumentId: 3,\n    \n- InstrumentId: 4,\n    \n- InstrumentId: 10, underlyingInstrumentId: 1, category: Futures, status: active\n    \n- InstrumentId: 11, underlyingInstrumentId: 2, category: Futures, status: disabled\n    \n- InstrumentId: 12, underlyingInstrumentId: 3, category: Spot, status: active\n    \n- InstrumentId: 13, underlyingInstrumentId: 4, category: Spot, status: disabled\n    \n\nWhen Derivative Instrument Category = Futures \u2192 InstrumentId:1 is returned.\n\nWhen Derivative Instrument Category = Spot \u2192InstrumentId:3 is returned.\n\n#### Suffix & Prefix\n\n| Pattern Type | Description | Sample |\n| --- | --- | --- |\n| Contains the word \"X\" | Find any description/ symbols that contains \"X\" | X |\n| Starts with \"X\" | Find any description/ symbols that start with \"X\" | X\\* |\n| Ends with \"X\" | Find any description/ symbol that ends with \"X\" | \\*X |\n| Equal to 'X' | Find any description/ symbol that = \"X\" | 'X' |\n\n#### NEW v1.30.0 Get Instrument- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 102 | Single category should be sent |\n| 102 | Wrong Sub Category |\n| 102 | Strategies category should be sent |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |",
+        "description": "This API allows to get a list of all instruments with their details.\n\n#### NEW v1.30.0 Get Instruments- Fields\n\n**Example for derivativeInstrumentCategory instrument -**\n\n- InstrumentId: 1,\n    \n- InstrumentId: 2,\n    \n- InstrumentId: 3,\n    \n- InstrumentId: 4,\n    \n- InstrumentId: 10, underlyingInstrumentId: 1, category: Futures, status: active\n    \n- InstrumentId: 11, underlyingInstrumentId: 2, category: Futures, status: disabled\n    \n- InstrumentId: 12, underlyingInstrumentId: 3, category: Spot, status: active\n    \n- InstrumentId: 13, underlyingInstrumentId: 4, category: Spot, status: disabled\n    \n\nWhen Derivative Instrument Category = Futures → InstrumentId:1 is returned.\n\nWhen Derivative Instrument Category = Spot →InstrumentId:3 is returned.\n\n#### NEW v1.32.0 Suffix & Prefix\n\n| Pattern Type | Description | Sample |\n| --- | --- | --- |\n| Contains the word \"X\" | Find any description/ symbols that contains \"X\" | X |\n| Starts with \"X\" | Find any description/ symbols that start with \"X\" | X\\* |\n| Ends with \"X\" | Find any description/ symbol that ends with \"X\" | \\*X |\n| Equal to 'X' | Find any description/ symbol that = \"X\" | 'X' |\n\n#### NEW v1.30.0 Get Instrument- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 102 | Single category should be sent |\n| 102 | Wrong Sub Category |\n| 102 | Strategies category should be sent |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |",
         "parameters": [
           {
             "name": "symbol",
@@ -1313,7 +1415,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "`Optional` \nfree text search by symbol \nSee the Suffix/Prefix table below"
+            "description": "`Optional` \nfree text search by symbol \n`NEW v1.32.0` see the Suffix/Prefix table below"
           },
           {
             "name": "description",
@@ -1322,7 +1424,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "`Optional` \nfree text search by description \nSee the Suffix/Prefix table below"
+            "description": "`Optional` \nfree text search by description \n`NEW v1.32.0` see the Suffix/Prefix table below"
           },
           {
             "name": "calendarId",
@@ -1359,7 +1461,7 @@
               "type": "string",
               "format": "date"
             },
-            "description": "`Optional` \nSearch for the instrument that startdate \u2265 dateFrom. \nFormat:YYYY-MM-DDThh:mm:ss[.SSS] \nFor instruments without startDate, send - `0000-01-01T00:00`"
+            "description": "`Optional` \nSearch for the instrument that startdate ≥ dateFrom. \nFormat:YYYY-MM-DDThh:mm:ss[.SSS] \n`NEW v1.31.0`for instruments without startDate, send - `0000-01-01T00:00`"
           },
           {
             "name": "startDateTo",
@@ -1379,7 +1481,7 @@
               "type": "string",
               "format": "date"
             },
-            "description": "`Optional` \nSearch for the instrument that stopdate \u2265 dateFrom. Format:YYYY-MM-DDThh:mm:ss[.SSS] \nFor instruments without stopDate, send - `0000-01-01T00:00`"
+            "description": "`Optional` \nSearch for the instrument that stopdate ≥ dateFrom. Format:YYYY-MM-DDThh:mm:ss[.SSS] \n`NEW v1.31.0`for instruments without stopDate, send - `0000-01-01T00:00`"
           },
           {
             "name": "stopDateTo",
@@ -1398,7 +1500,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "`Optional` \nSearch by underlyingInstrumentId for instruments without product - send 0"
+            "description": "`Optional` \nSearch by underlyingInstrumentId \n`NEW v1.31.0`for instruments without product - send 0"
           },
           {
             "name": "derivativeInstrumentCategory",
@@ -1407,7 +1509,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "`Optional` \nSearch instruments that has an underling instrument and is in this category & active \nFor example see below \nfor values see in the Category List - here"
+            "description": "`Optional` \nSearch instruments that has an underling instrument and is in this category `NEW v1.32.0` & active \nFor example see below \nfor values see in the Category List - here"
           },
           {
             "name": "statuses",
@@ -1476,7 +1578,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "`Optional` \nobject with 2 parameters: \n- field (String) = Symbol (case-insensitive) \n- direction (Asc, Desc) \nIf nothing or invalid field was sent the default is [Symbol, Asc]"
+            "description": "`Optional` \nobject with 2 parameters: \n- field (String) = Symbol `NEW v1.34.0` (case-insensitive) \n- direction (Asc, Desc) direction \nIf nothing or invalid field was sent the default is [Symbol, Asc]"
           }
         ],
         "responses": {
@@ -1592,7 +1694,7 @@
         "tags": [
           "Instruments"
         ],
-        "description": "This API allows to update existing instrument.\n\n#### Update Instrument- Error Codes\n\nAll validations in create instrument and the below\n\nAll validations in create instrument and the below\n\n| Code | Message |\n| --- | --- |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 101 | \\[Start Date/~~Stop Date~~ Removed v1.25 ~~/~~ Category\\] can\u2019t be changed after start date |\n| 101 | Category can\u2019t be changed for instrument that is underlying instrument |\n| 101 | \\[FieldName\\] can\u2019t be changed for strategy related instrument |\n| 101 | \\[FieldName\\] can\u2019t be changed after elapsed |\n| 105 | Mass cancellation must be done before disabling the instrument |\n| 2402 | Mass cancellation must be done before changing quantityPrecision |\n| 2402 | Mass cancellation must be done before changing pricePrecision |\n| 10001 | Permission denied |",
+        "description": "This API allows to update existing instrument.\n\n#### Update Instrument- Error Codes\n\nAll validations in create instrument and the below\n\nAll validations in create instrument and the below\n\n| Code | Message |\n| --- | --- |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 101 | \\[Start Date/~~Stop Date~~ Removed v1.25 ~~/~~ Category\\] can’t be changed after start date |\n| `(REMOVED v1.34.0)`  <br>~~101~~ | ~~No updates allowed after the stop date~~ |\n| 101 | Category can’t be changed for instrument that is underlying instrument |\n| 101 | \\[FieldName\\] can’t be changed for strategy related instrument |\n| `(NEW v1.34.0)`  <br>101 | \\[FieldName\\] can’t be changed after elapsed |\n| `NEW v1.30.0` 105 | Mass cancellation must be done before disabling the instrument |\n| `REMOVED v1.30.0` ~~2402~~ | ~~\\[NumberOfOrders\\] active orders have quantity precision higher than \\[quantityPrecision\\]~~ |\n| `REMOVED v1.30.0` ~~2402~~ | ~~\\[NumberOfOrders\\] active orders have quantity higher than \\[maxLong/10^ quantityPrecision\\]~~ |\n| `REMOVED v1.30.0` ~~2403~~ | ~~\\[NumberOfOrders\\] active orders have price precision higher than \\[pricePrecision\\]~~ |\n| `REMOVED v1.30.0` ~~2403~~ | ~~\\[NumberOfOrders\\] active orders have price higher than \\[maxLong/10^ pricePrecision\\]~~ |\n| `REMOVED v1.30.0` ~~2404~~ | ~~Current total depth is higher than \\[maxLong/10^ quantityPrecision\\]. You should remove some depth or decrease the quantity precision~~ |\n| `NEW v1.30.0` 2402 | Mass cancellation must be done before changing quantityPrecision |\n| `NEW v1.30.0` 2402 | Mass cancellation must be done before changing pricePrecision |\n| 10001 | Permission denied |",
         "parameters": [
           {
             "name": "id",
@@ -1785,7 +1887,7 @@
         "tags": [
           "Instruments"
         ],
-        "description": "This API allows to archiving of existing instrument\n\nPlease contact the Exberry team if you would like to enable it on your system.\n\nIn order to support a large number of instruments we introduce the ability to archive instruments.\n\nThis is an irreversible operation that should happen only in case the instrument is no longer in use permanently.\n\nWhen an instrument is archived, you can still access historical financial information about it, including Orders, Order events, Trades, and Ops reports. You can also create a new instrument with the same symbol, but the archived instrument is no longer tradable.\n\nArchived instruments will be served only in those places:\n\n- Reporting\n    \n    - Orders\n        \n    - Orders event\n        \n    - Trades\n        \n    - Operations\n        \n- Reporting API:\n    \n    - vN/exchange.reporting/mp/orders\n        \n    - vN/exchange.reporting/mp/trades\n        \n\nIn all other APIs, archived instruments will not be served.\n\nPrior to archiving an instrument, it must first be disabled, in case this instrument is a leg of a strategy, the parent must be archived prior to its legs.\n\n#### Archive Instrument- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | Exchange is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Disable the instrument before attempting to archive it |\n| 106 | Archiving strategy \\[parentSymbol\\] is required |\n| 107  <br>Note: This validation will only take effect after the first update for that instrument | This instrument is underlying instrument of \\[Derivative Symbol\\] |\n| 10001 | Permission denied |",
+        "description": "This API allows to archiving of existing instrument\n\nPlease contact the Exberry team if you would like to enable it on your system.\n\nIn order to support a large number of instruments we introduce the ability to archive instruments.\n\nThis is an irreversible operation that should happen only in case the instrument is no longer in use permanently.\n\nWhen an instrument is archived, you can still access historical financial information about it, including Orders, Order events, Trades, and Ops reports. You can also create a new instrument with the same symbol, but the archived instrument is no longer tradable.\n\nArchived instruments will be served only in those places:\n\n- Reporting\n    \n    - Orders\n        \n    - Orders event\n        \n    - Trades\n        \n    - Operations\n        \n- Reporting API:\n    \n    - v1/exchange.reporting/mp/orders\n        \n    - v2/exchange.reporting/mp/trades\n        \n\nIn all other APIs, archived instruments will not be served.\n\nPrior to archiving an instrument, it must first be disabled, in case this instrument is a leg of a strategy, the parent must be archived prior to its legs.\n\n#### Archive Instrument- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | Exchange is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Disable the instrument before attempting to archive it |\n| 106 | Archiving strategy \\[parentSymbol\\] is required |\n| `NEW v1.34.0`  <br>107  <br>Note: This validation will only take effect after the first update for that instrument. | This instrument is underlying instrument of \\[Derivative Symbol\\] |\n| 10001 | Permission denied |",
         "parameters": [
           {
             "name": "id",
@@ -2772,7 +2874,10 @@
                               "Active",
                               "Blocked"
                             ],
-                            "description": "Active \u2014 activity through the account is allowed\nBlocked \u2014 activity through the account is not allowed"
+                            "x-enumDescriptions": {
+                              "Active": "activity through the account is allowed",
+                              "Blocked": "activity through the account is not allowed"
+                            }
                           }
                         }
                       }
@@ -2825,7 +2930,7 @@
         "tags": [
           "MPs"
         ],
-        "description": "This API allows to create a new Account.\n\nID will be returned in the response, this ID is the unique identifier of the Account and should be used when sending update commands.\n\nNote: this ID can be retrieved via Get Accounts API.\n\n#### Create Account - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found  <br>  <br>Can\u2019t Block the account when InProcess Transaction Requests exist |\n| 102 | CHANGED 1.57.0  <br>~~\\[FieldName\\] already exists~~  <br>\\[FieldName\\] already exists for id: \\[accountId\\] |\n| 10001 | Permission denied |",
+        "description": "This API allows to create a new Account.\n\nID will be returned in the response, this ID is the unique identifier of the Account and should be used when sending update commands.\n\nNote: this ID can be retrieved via Get Accounts API.\n\n#### Create Account - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found  <br>  <br>Can’t Block the account when InProcess Transaction Requests exist |\n| 102 | CHANGED 1.57.0  <br>~~\\[FieldName\\] already exists~~  <br>\\[FieldName\\] already exists for id: \\[accountId\\] |\n| 10001 | Permission denied |",
         "parameters": [],
         "responses": {
           "200": {
@@ -2855,7 +2960,10 @@
                         "Active",
                         "Blocked"
                       ],
-                      "description": "Active \u2014 activity through the account is allowed\nBlocked \u2014 activity through the account is not allowed"
+                      "x-enumDescriptions": {
+                        "Active": "activity through the account is allowed",
+                        "Blocked": "activity through the account is not allowed"
+                      }
                     }
                   }
                 },
@@ -2966,7 +3074,10 @@
                         "Active",
                         "Blocked"
                       ],
-                      "description": "Active \u2014 activity through the account is allowed\nBlocked \u2014 activity through the account is not allowed"
+                      "x-enumDescriptions": {
+                        "Active": "activity through the account is allowed",
+                        "Blocked": "activity through the account is not allowed"
+                      }
                     }
                   }
                 },
@@ -3021,7 +3132,7 @@
         "tags": [
           "MPs"
         ],
-        "description": "This API allows to update existing Account.\n\n#### Update Account - Error Codes\n\nAll errors in Create Account section and the below:\n\n| Code | Message |\n| --- | --- |\n| 100 | Can\u2019t change Ledger Account when active \\[EntityName\\] exist |\n| 101 | MP can\u2019t be changed  <br>Account type can\u2019t be changed |",
+        "description": "This API allows to update existing Account.\n\n#### Update Account - Error Codes\n\nAll errors in Create Account section and the below:\n\n| Code | Message |\n| --- | --- |\n| 100 | Can’t change Ledger Account when active \\[EntityName\\] exist |\n| 101 | MP can’t be changed  <br>Account type can’t be changed |",
         "parameters": [
           {
             "name": "id",
@@ -3061,7 +3172,10 @@
                         "Active",
                         "Blocked"
                       ],
-                      "description": "Active \u2014 activity through the account is allowed\nBlocked \u2014 activity through the account is not allowed"
+                      "x-enumDescriptions": {
+                        "Active": "activity through the account is allowed",
+                        "Blocked": "activity through the account is not allowed"
+                      }
                     }
                   }
                 },
@@ -3127,8 +3241,8 @@
     },
     "/api/mps/{mpId}/api-keys": {
       "post": {
-        "operationId": "Create_API_Key",
-        "summary": "Create API Key",
+        "operationId": "Create_APIKey",
+        "summary": "Create APIKey",
         "tags": [
           "MPs"
         ],
@@ -3235,8 +3349,8 @@
         }
       },
       "get": {
-        "operationId": "Get_API_Keys",
-        "summary": "Get API Keys",
+        "operationId": "Get_APIKeys",
+        "summary": "Get APIKeys",
         "tags": [
           "MPs"
         ],
@@ -3351,8 +3465,8 @@
     },
     "/api/mps/{mpId}/api-keys/{apiKey}": {
       "put": {
-        "operationId": "Update_API_Key",
-        "summary": "Update API Key",
+        "operationId": "Update_apiKey",
+        "summary": "Update apiKey",
         "tags": [
           "MPs"
         ],
@@ -3471,8 +3585,8 @@
         }
       },
       "get": {
-        "operationId": "Get_API_Key",
-        "summary": "Get API Key",
+        "operationId": "Get_APIKey",
+        "summary": "Get APIKey",
         "tags": [
           "MPs"
         ],
@@ -3580,8 +3694,8 @@
         }
       },
       "delete": {
-        "operationId": "Delete_API_Key",
-        "summary": "Delete API Key",
+        "operationId": "Delete_APIKey",
+        "summary": "Delete APIKey",
         "tags": [
           "MPs"
         ],
@@ -3996,8 +4110,8 @@
     },
     "/api/mp-groups/{groupId}/api-keys": {
       "post": {
-        "operationId": "MP_Groups_Create_API_Key",
-        "summary": "Create API Key",
+        "operationId": "Create_apiKey",
+        "summary": "Create apiKey",
         "tags": [
           "MP Groups"
         ],
@@ -4094,8 +4208,8 @@
         }
       },
       "get": {
-        "operationId": "MP_Groups_Get_API_Keys",
-        "summary": "Get API Keys",
+        "operationId": "Get_apiKeys",
+        "summary": "Get apiKeys",
         "tags": [
           "MP Groups"
         ],
@@ -4182,8 +4296,8 @@
     },
     "/api/mp-groups/{groupId}/api-keys/{apiKey}": {
       "put": {
-        "operationId": "MP_Groups_Update_API_Key",
-        "summary": "Update API Key",
+        "operationId": "MP_Groups_Update_apiKey",
+        "summary": "Update apiKey",
         "tags": [
           "MP Groups"
         ],
@@ -4309,8 +4423,8 @@
         }
       },
       "delete": {
-        "operationId": "MP_Groups_Delete_API_Key",
-        "summary": "Delete API Key",
+        "operationId": "Delete_apiKey",
+        "summary": "Delete apiKey",
         "tags": [
           "MP Groups"
         ],
@@ -4376,8 +4490,8 @@
         }
       },
       "get": {
-        "operationId": "MP_Groups_Get_API_Key",
-        "summary": "Get API Key",
+        "operationId": "Get_apiKey",
+        "summary": "Get apiKey",
         "tags": [
           "MP Groups"
         ],
@@ -4636,7 +4750,7 @@
         "tags": [
           "MP Groups"
         ],
-        "description": "#### Update MP Group- Error Codes\n\nAll validations in create instrument and the below\u00a0\n\n| Code | Message |\n| --- | --- |\n| 101 | \\[FieldName\\] not found |",
+        "description": "#### Update MP Group- Error Codes\n\nAll validations in create instrument and the below \n\n| Code | Message |\n| --- | --- |\n| 101 | \\[FieldName\\] not found |",
         "parameters": [
           {
             "name": "groupId",
@@ -5663,7 +5777,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Cancel Order API allows you to cancel order\n\n#### Cancel order - Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument id for the trade |\n| orderId | Int | the Id of the order we want to cancel |\n| cancelReason | Enum | `Optional`  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>CancelOrderOnBehalf (default if nothing is sent)  <br>CancelRequest  <br>CorporateAction |\n\n#### Cancel Order - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument trading is not allowed |\n| 102 | Market is closed |\n| 102 | Instrument trading is halt |\n| 101 | Not allowed |\n| 108 | Cancellation of implied order is not allowed |\n| 10001 | Permission denied |",
+        "description": "Cancel Order API allows you to cancel order\n\n#### Cancel order - Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument id for the trade |\n| orderId | Int | the Id of the order we want to cancel |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>CancelOrderOnBehalf(default if nothing is sent)  <br>CancelRequest  <br>CorporateAction |\n\n#### Cancel Order - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument trading is not allowed |\n| 102 | Market is closed |\n| 102 | Instrument trading is halt |\n| 101 | Not allowed |\n| `(NEW 1.37.0)`  <br>108 | Cancellation of implied order is not allowed |\n| 10001 | Permission denied |",
         "parameters": [],
         "responses": {
           "200": {
@@ -5842,8 +5956,19 @@
         "tags": [
           "Operations"
         ],
-        "description": "Mass Cancel API allows you to mass cancel pending activity per request criteria:\n\nRequest Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringfied number | Instrument ID to mass cancel the orders |\n| `Removed v1.30.0`  <br>~~comment~~ | ~~String~~ | ~~Free text comment~~ |\n| mpId | Stringfied number | `Optional`  <br>MP ID to mass cancel the target entities  <br>Not sending this parameter will mass cancel for all MPs |\n| targetParties | \\[\\]TargetParty objects | `Optional`  <br>  <br>targetParties to target the mass cancel orders.  <br>If multiple targetParty objects are in a request, the system cancels orders with all targetParties.  <br>For example:  <br>Order1 has party1  <br>Order2 has party1 and party2  <br>Order3 has party1, party2 and party3  <br>Order4 has no parties  <br>A mass cancel request with targetParties(party1 and party2) will cancel order 2 and 3.  <br>  <br>`CHANGED v1.46.0` Note: For accounts: id=accountId, ~~source=D, role=1001~~ source=P, role=24 |\n| `(NEW 1.30.0)` targetEntities | \\[\\] Enum | `Optional`  <br>  <br>The system cancels the type of active entities mentioned in the request.  <br>  <br>Array of below values:  <br>Order - cancels all orders  <br>RFQ - cancels all RFQs and all active quotes belong to them  <br>Quote - cancels all Quotes  <br>`(NEW v1.31.0)` AllegedTrade - cancels all Alleged Trades  <br>  <br>If not exist, system considers as targetEntities = \\[\u2018Order\u2019\\] |\n| `(NEW 1.31.0)` targetScope | Enum | The field specifies the scope the mass cancel request applies to  <br>  <br>Allowed values:  <br>Instrument - cancel scope is a single instrument  <br>All - cancel scope is all instruments  <br>  <br>If not sent \u201cInstrument\u201d is considered. |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>MassCancelOnBehalf (default if nothing is sent)  <br>MassCancelRequest  <br>CorporateAction |\n\n##### NEW **TargetParty specification:**\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | string | TargetParty id |\n| source | char | TargetParty source |\n| role | int | TargetParty role |\n\n#### Mass Cancel- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2001 | Wrong action |\n| 2001 | Wrong instrumentIds |\n| 2401 | Wrong instrumentId: \\[instrumentId\\] |\n| 403 | Permission denied |",
-        "parameters": [],
+        "description": "Mass Cancel API allows you to mass cancel pending activity per request criteria:\n\nRequest Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringfied number | Instrument ID to mass cancel the orders |\n| `Removed v1.30.0`  <br>~~comment~~ | ~~String~~ | ~~Free text comment~~ |\n| mpId | Stringfied number | `Optional`  <br>MP ID to mass cancel the target entities  <br>Not sending this parameter will mass cancel for all MPs |\n| targetParties | \\[\\]TargetParty objects | `Optional`  <br>  <br>targetParties to target the mass cancel orders.  <br>If multiple targetParty objects are in a request, the system cancels orders with all targetParties.  <br>For example:  <br>Order1 has party1  <br>Order2 has party1 and party2  <br>Order3 has party1, party2 and party3  <br>Order4 has no parties  <br>A mass cancel request with targetParties(party1 and party2) will cancel order 2 and 3.  <br>  <br>`CHANGED v1.46.0` Note: For accounts: id=accountId, ~~source=D, role=1001~~ source=P, role=24 |\n| `(NEW 1.30.0)` targetEntities | \\[\\] Enum | `Optional`  <br>  <br>The system cancels the type of active entities mentioned in the request.  <br>  <br>Array of below values:  <br>Order - cancels all orders  <br>RFQ - cancels all RFQs and all active quotes belong to them  <br>Quote - cancels all Quotes  <br>`(NEW v1.31.0)` AllegedTrade - cancels all Alleged Trades  <br>  <br>If not exist, system considers as targetEntities = \\[‘Order’\\] |\n| `(NEW 1.31.0)` targetScope | Enum | The field specifies the scope the mass cancel request applies to  <br>  <br>Allowed values:  <br>Instrument - cancel scope is a single instrument  <br>All - cancel scope is all instruments  <br>  <br>If not sent “Instrument” is considered. |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>MassCancelOnBehalf (default if nothing is sent)  <br>MassCancelRequest  <br>CorporateAction |\n\n##### NEW **TargetParty specification:**\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | string | TargetParty id |\n| source | char | TargetParty source |\n| role | int | TargetParty role |\n\n#### Mass Cancel- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2001 | Wrong action |\n| 2001 | Wrong instrumentIds |\n| 2401 | Wrong instrumentId: \\[instrumentId\\] |\n| 403 | Permission denied |",
+        "parameters": [
+          {
+            "name": "Test",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Test 1",
+            "example": "1"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success 1",
@@ -6225,7 +6350,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Trade Adjustment allows to change the price of a trade\n\n#### Trade Adjustment- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument ID to cancel the orders |\n| tradeId | Int | Trade Id |\n| newPrice | Decimal | New price of the trade |\n| excludedPriceBands | \\[ \\] Enum | Optional  <br>Excluded prices from Price Bands.  <br>  <br>Allowed values:  <br>INSTRUMENT_MIN_MAX  <br>DAILY_MIN_MAX  <br>TICK_MIN_MAX |\n\n#### Trade Adjustment- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Instrument trading is not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Price precision is\\[PricePrecision\\] |\n| 102 | Quantity precision is\\[QuantityPrecision\\] |\n| 102 | Instrument trading is halted |\n| 102 | Price breaches \\[FieldName\\] of \\[FieldValue\\] |\n| 102 | Maximum value is \\[maxOrderValue\\] |\n| 102 | Price tick size is \\[tickSize\\] |\n| 102 | Trading is not allowed |\n| 102 | Request failed, strategy leg configuration has changed |\n| 105 | Request failed, trade is already canceled or from previous days or is leg trade |\n| 105 | Implied order trades can\u2019t be adjusted |\n| 111 | Not allowed when LEDGER is enabled |\n| 10001 | Permission denied |",
+        "description": "Trade Adjustment allows to change the price of a trade\n\n#### Trade Adjustment- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument ID to cancel the orders |\n| tradeId | Int | Trade Id |\n| newPrice | Decimal | New price of the trade |\n| excludedPriceBands | \\[ \\] Enum | Optional  <br>Excluded prices from Price Bands.  <br>  <br>Allowed values:  <br>INSTRUMENT_MIN_MAX  <br>DAILY_MIN_MAX  <br>TICK_MIN_MAX |\n\n#### Trade Adjustment- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Instrument trading is not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Price precision is\\[PricePrecision\\] |\n| 102 | Quantity precision is\\[QuantityPrecision\\] |\n| 102 | Instrument trading is halted |\n| 102 | Price breaches \\[FieldName\\] of \\[FieldValue\\] |\n| 102 | Maximum value is \\[maxOrderValue\\] |\n| 102 | Price tick size is \\[tickSize\\] |\n| 102 | Trading is not allowed |\n| 102 | Request failed, strategy leg configuration has changed |\n| 105 | Request failed, trade is already canceled or from previous days or is leg trade |\n| 105 | Implied order trades can’t be adjusted |\n| 111 | Not allowed when LEDGER is enabled |\n| 10001 | Permission denied |",
         "parameters": [],
         "responses": {
           "200": {
@@ -6319,7 +6444,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Apply Cash Distribution API allows you to adjust active orders and current market data fields(not historical) in case of a Corporate Actions that results cash distributions (such as cash dividend).\n\n#### **Request Parameters:**\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringified number | Instrument ID to apply the cash distribution |\n| amount | Stringified Decimal | Cash Amount per share  <br>  <br>Maximum 10 decimal places |\n\n#### **Response:**\n\n| **Field** | Description |\n| --- | --- |\n| numberOfOrders | The total number of active/suspended orders for the instrument before applying the corporate action |\n| numberOfNewOrders | The number of new orders generated for the corporate action |\n| numberOfCancelledOrders | The number of cancelled orders for the corporate action |\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 10001 | Permission denied |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 100 | \\[FieldName\\] must be \u2264 \\[maxLong/10^ fieldPrecision\\] |\n| 100 | \\[FieldName\\] must be \u2265 \\[minLong/10^ fieldPrecision\\] |\n| 102 | Instrument trading is not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument should be halted when market is open |\n| 102 | Apply Cash Distribution is not allowed when there is no Closing Price |",
+        "description": "Apply Cash Distribution API allows you to adjust active orders and current market data fields(not historical) in case of a Corporate Actions that results cash distributions (such as cash dividend).\n\n#### **Request Parameters:**\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringified number | Instrument ID to apply the cash distribution |\n| amount | Stringified Decimal | Cash Amount per share  <br>  <br>Maximum 10 decimal places |\n\n#### **Response:**\n\n| **Field** | Description |\n| --- | --- |\n| numberOfOrders | The total number of active/suspended orders for the instrument before applying the corporate action |\n| numberOfNewOrders | The number of new orders generated for the corporate action |\n| numberOfCancelledOrders | The number of cancelled orders for the corporate action |\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 10001 | Permission denied |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 100 | \\[FieldName\\] must be ≤ \\[maxLong/10^ fieldPrecision\\] |\n| 100 | \\[FieldName\\] must be ≥ \\[minLong/10^ fieldPrecision\\] |\n| 102 | Instrument trading is not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument should be halted when market is open |\n| 102 | Apply Cash Distribution is not allowed when there is no Closing Price |",
         "parameters": [],
         "responses": {
           "200": {
@@ -6517,7 +6642,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Get Candle Adjustments API allows you to retrieve the historical market data adjustment factors related to Corporate Actions at instrument level.\n\n#### Request Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| dateFrom | Stringified Date | Optional  <br>Search for the CAs that exDate \u2265 dateFrom. Format:YYYY-MM-DD |\n| dateTo | Stringified Date | Optional  <br>Search for the CAs that exDate < dateTo  <br>Format: YYYY-MM-DD |\n| instrumentId | Stringified Int | Optional  <br>  <br>Instrument Id |\n| orderBy | Enum | Optional  <br>object with 2 parameters:  <br>field (String)  <br>direction (Asc, Desc) direction  <br>  <br>If nothing or invalid field was sent the default is \\[exDate, Desc\\] |\n| limit | Stringified Int | Optional  <br>How many records to include in each page  <br>If nothing was sent default is 25  <br>Max value = 100 |\n| offset | Stringified Int | Optional  <br>Which record to start send from (if you want page 3 and there are 50 records per page offset should be 150)  <br>If nothing was sent default is 0 (=first record) |\n\n#### **Response:**\n\n| Attribute | Type | Description |\n| --- | --- | --- |\n| count | Stringified Int | total number of records based on filter |\n| List of adjustmentFactors |  |  |\n| instrumentId | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n| exDate | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n| price | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n| quantity | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n\n#### Error Codes\n\nSame as Update Candle Adjustments",
+        "description": "Get Candle Adjustments API allows you to retrieve the historical market data adjustment factors related to Corporate Actions at instrument level.\n\n#### Request Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| dateFrom | Stringified Date | Optional  <br>Search for the CAs that exDate ≥ dateFrom. Format:YYYY-MM-DD |\n| dateTo | Stringified Date | Optional  <br>Search for the CAs that exDate < dateTo  <br>Format: YYYY-MM-DD |\n| instrumentId | Stringified Int | Optional  <br>  <br>Instrument Id |\n| orderBy | Enum | Optional  <br>object with 2 parameters:  <br>field (String)  <br>direction (Asc, Desc) direction  <br>  <br>If nothing or invalid field was sent the default is \\[exDate, Desc\\] |\n| limit | Stringified Int | Optional  <br>How many records to include in each page  <br>If nothing was sent default is 25  <br>Max value = 100 |\n| offset | Stringified Int | Optional  <br>Which record to start send from (if you want page 3 and there are 50 records per page offset should be 150)  <br>If nothing was sent default is 0 (=first record) |\n\n#### **Response:**\n\n| Attribute | Type | Description |\n| --- | --- | --- |\n| count | Stringified Int | total number of records based on filter |\n| List of adjustmentFactors |  |  |\n| instrumentId | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n| exDate | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n| price | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n| quantity | Same as Update Candle Adjustments | Same as Update Candle Adjustments |\n\n#### Error Codes\n\nSame as Update Candle Adjustments",
         "parameters": [
           {
             "name": "dateFrom",
@@ -6526,7 +6651,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Search for the CAs that exDate \u2265 dateFrom. \nFormat:YYYY-MM-DD",
+            "description": "Search for the CAs that exDate ≥ dateFrom. \nFormat:YYYY-MM-DD",
             "example": "2024-08-01"
           },
           {
@@ -6547,7 +6672,7 @@
               "type": "string"
             },
             "description": "Instrument Id",
-            "example": "78"
+            "example": "77"
           },
           {
             "name": "orderBy",
@@ -6670,7 +6795,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Update Candle Adjustments API allows you to create/update the historical market data adjustment factors related to Corporate Actions at instrument level.\n\n#### Request Parameters\n\n| Attribute | Type | Description |\n| --- | --- | --- |\n| instrumentId | Stringified number | Instrument ID to apply the cash distribution |\n| exDate | Stringified Date | Ex-date of the corporate action  <br>format YYYY-MM-DD |\n| price | Stringified Decimal | Optional  <br>  <br>The adjustment factor applicable to price related market data values prior to the exDate  <br>  <br>price or quantity is required |\n| quantity | Stringified Decimal | Optional  <br>  <br>The adjustment factor applicable to quantity related market data values prior to the exDate  <br>  <br>price or quantity is required |\n\n#### **Response:**\n\nNo response body\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 10001 | Permission denied |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] must be \u2264 \\[maxLong/10^ fieldPrecision\\] |",
+        "description": "Update Candle Adjustments API allows you to create/update the historical market data adjustment factors related to Corporate Actions at instrument level.\n\n#### Request Parameters\n\n| Attribute | Type | Description |\n| --- | --- | --- |\n| instrumentId | Stringified number | Instrument ID to apply the cash distribution |\n| exDate | Stringified Date | Ex-date of the corporate action  <br>format YYYY-MM-DD |\n| price | Stringified Decimal | Optional  <br>  <br>The adjustment factor applicable to price related market data values prior to the exDate  <br>  <br>price or quantity is required |\n| quantity | Stringified Decimal | Optional  <br>  <br>The adjustment factor applicable to quantity related market data values prior to the exDate  <br>  <br>price or quantity is required |\n\n#### **Response:**\n\nNo response body\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 10001 | Permission denied |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] must be ≤ \\[maxLong/10^ fieldPrecision\\] |",
         "parameters": [],
         "responses": {
           "200": {
@@ -6838,7 +6963,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Set Settlement Price API allows you to set settlement price for an instrument\n\n#### Set Settlement Prices - Request Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | string | Instrument ID to set a Settlement Price |\n| price | string | The price to set |\n| updateReferencePrice  <br>`Optional` | Boolean | Update the reference price with the settlement price  <br>default is True |\n\n#### Set Settlement Prices - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | Exchange is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | instrumentId not found |\n| 102 | Currently not allowed |\n| 10001 | Permission denied |",
+        "description": "Set Settlement Price API allows you to set settlement price for an instrument\n\n#### Set Settlement Prices - Request Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | string | Instrument ID to set a Settlement Price |\n| price | string | The price to set |\n| `NEW v1.34.0`  <br>updateReferencePrice `Optional` | Boolean | Update the reference price with the settlement price  <br>default is True |\n\n#### Set Settlement Prices - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | Exchange is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | instrumentId not found |\n| 102 | Currently not allowed |\n| 10001 | Permission denied |",
         "parameters": [],
         "responses": {
           "200": {
@@ -7004,7 +7129,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "Trading Halt API allows you to halt the trading for a:\n\n- List of instrument\n    \n- List of instrument groups\n    \n- All instruments\n    \n- Multiple filtered instruments, see [here](https://documenter.getpostman.com/view/6229811/TzCV3jcq#c1b23770-4cc1-41b0-a035-15f3e280bbe4) for more details\n    \n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentIds | \\[\\] Stringified numbers | `Optional`  <br>List of instruments to halt  <br>Note: not sending this parameter will halt the trading for all instruments |\n| instrumentGroupIds | \\[\\] Stringified numbers | `Optional`List of instrument groups to halt |\n| `(NEW v1.57.0)`  <br>scheduleHaltTime | Unix time (sec) | `Optional`  <br>When to halt the trading  <br>If this is not sent, the halt will be immediate |\n| scheduleResumeTime | Unix time (sec) | `Optional`  <br>When to resume trading |\n| scheduleResumeTimeInterval | Int String | `Optional`  <br>When to resume trading in minutes Interval |\n\n#### Schedule Halt and Resume CHANGED 1.57.0\n\n1. When the request sets a halt, it is allowed to specify halt at explicit time as well as the explicit resumption time. If not defind, action is immediate. When scheduling resume, a time gap extension instead of an explicit time can be defined.\n    \n2. Examples:\n    \n    1. Now it's 14:00 and a user clicks on halt with a time interval of 10 minutes, trading will resume at 14:10.\n        \n    2. In addition to the previous example, at 14:07 the user again clicks on halt with a time interval of 5 minutes, trading will resume at 14:15 (14:10 plus the 5 minutes from the latest request).\n        \n\n**Behavior Summary**\n\n1. Scheduled Resume can be triggered by one of the below:\n    \n    1. CBR: Triggered by CBR\n        \n    2. Regular: Triggered by operator (via time interval or explicit time)\n        \n\n| New Request | Existing Timers | Behavior |\n| --- | --- | --- |\n| Halt Without Scheduled Resume  <br>  <br>OR  <br>Halt & Scheduled Resume With Explicit Time  <br>  <br>OR  <br>Immediate Resume  <br>  <br>OR  <br>Scheduled Halt  <br>  <br>OR  <br>Scheduled Halt & Scheduled Resume | Scheduled Halt  <br>with/ without any Scheduled Resume  <br>  <br>OR  <br>Scheduled Resume | Drop existing schedule and apply the new command |\n| Halt & Scheduled Resume with Time Interval | Scheduled Resume Regular | Interval of the new request will be added to the original Scheduled Resume time. |\n| Halt & Scheduled Resume with Time Interval | Scheduled CBR Resume  <br>OR  <br>Scheduled Halt  <br>with/ without any Scheduled Resume | Drop existing schedule and apply the new command |\n| CBR Halt with/without Resume | Scheduled Halt  <br>with/ without Scheduled Resume  <br>OR  <br>Scheduled Resume | Doesn\u2019t drop existing scheduled halts/resumes and halts immediately and schedule new resume (if applicable) |\n\n#### Trading Halt - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2001 | Wrong action |\n| 2001 | Wrong instrumentIds |\n| 2002 | \\[FieldName\\] must be in future |\n| 2003 | Only one of scheduleResumeTime and scheduleResumeTimeInterval is allowed |\n| 2401 | Wrong instrumentId: \\[instrumentId\\] |\n| 2401 | Wrong instrumentGroupIds: \\[instrumentGroupId\\] |\n| 403 | Permission denied |\n| 201 | You can send up to 750 instruments per request |",
+        "description": "Trading Halt API allows you to halt the trading for a:\n\n- List of instrument\n    \n- List of instrument groups\n    \n- All instruments\n    \n- Multiple filtered instruments, see [here](https://documenter.getpostman.com/view/6229811/TzCV3jcq#c1b23770-4cc1-41b0-a035-15f3e280bbe4) for more details\n    \n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentIds | \\[\\] Stringified numbers | `Optional`  <br>List of instruments to halt  <br>Note: not sending this parameter will halt the trading for all instruments |\n| instrumentGroupIds | \\[\\] Stringified numbers | `Optional`List of instrument groups to halt |\n| `(NEW v1.57.0)`  <br>scheduleHaltTime | Unix time (sec) | `Optional`  <br>When to halt the trading  <br>If this is not sent, the halt will be immediate |\n| scheduleResumeTime | Unix time (sec) | `Optional`  <br>When to resume trading |\n| scheduleResumeTimeInterval | Int String | `Optional`  <br>When to resume trading in minutes Interval |\n\n#### Schedule Halt and Resume CHANGED 1.57.0\n\n1. When the request sets a halt, it is allowed to specify halt at explicit time as well as the explicit resumption time. If not defind, action is immediate. When scheduling resume, a time gap extension instead of an explicit time can be defined.\n    \n2. Examples:\n    \n    1. Now it's 14:00 and a user clicks on halt with a time interval of 10 minutes, trading will resume at 14:10.\n        \n    2. In addition to the previous example, at 14:07 the user again clicks on halt with a time interval of 5 minutes, trading will resume at 14:15 (14:10 plus the 5 minutes from the latest request).\n        \n\n**Behavior Summary**\n\n1. Scheduled Resume can be triggered by one of the below:\n    \n    1. CBR: Triggered by CBR\n        \n    2. Regular: Triggered by operator (via time interval or explicit time)\n        \n\n| New Request | Existing Timers | Behavior |\n| --- | --- | --- |\n| Halt Without Scheduled Resume  <br>  <br>OR  <br>Halt & Scheduled Resume With Explicit Time  <br>  <br>OR  <br>Immediate Resume  <br>  <br>OR  <br>Scheduled Halt  <br>  <br>OR  <br>Scheduled Halt & Scheduled Resume | Scheduled Halt  <br>with/ without any Scheduled Resume  <br>  <br>OR  <br>Scheduled Resume | Drop existing schedule and apply the new command |\n| Halt & Scheduled Resume with Time Interval | Scheduled Resume Regular | Interval of the new request will be added to the original Scheduled Resume time. |\n| Halt & Scheduled Resume with Time Interval | Scheduled CBR Resume  <br>OR  <br>Scheduled Halt  <br>with/ without any Scheduled Resume | Drop existing schedule and apply the new command |\n| CBR Halt with/without Resume | Scheduled Halt  <br>with/ without Scheduled Resume  <br>OR  <br>Scheduled Resume | Doesn’t drop existing scheduled halts/resumes and halts immediately and schedule new resume (if applicable) |\n\n#### Trading Halt - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2001 | Wrong action |\n| 2001 | Wrong instrumentIds |\n| 2002 | \\[FieldName\\] must be in future |\n| 2003 | Only one of scheduleResumeTime and scheduleResumeTimeInterval is allowed |\n| 2401 | Wrong instrumentId: \\[instrumentId\\] |\n| 2401 | Wrong instrumentGroupIds: \\[instrumentGroupId\\] |\n| 403 | Permission denied |\n| 201 | You can send up to 750 instruments per request |",
         "parameters": [],
         "responses": {
           "200": {
@@ -7170,7 +7295,7 @@
         "tags": [
           "Operations"
         ],
-        "description": "New v1.50.0\n\nSet News API allows you to submit news to the system\n\n#### Set News - Request Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | int | New id, uniqueness is not validated by the system; it is the client\u2019s responsibility to maintain it |\n| message | string | News message |\n\n#### Set News - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | Exchange is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 10001 | Permission denied |",
+        "description": "New v1.50.0\n\nSet News API allows you to submit news to the system\n\n#### Set News - Request Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | int | New id, uniqueness is not validated by the system; it is the client’s responsibility to maintain it |\n| message | string | News message |\n\n#### Set News - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | Exchange is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 10001 | Permission denied |",
         "parameters": [],
         "responses": {
           "200": {
