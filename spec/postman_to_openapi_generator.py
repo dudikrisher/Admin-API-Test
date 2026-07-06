@@ -65,8 +65,8 @@ def extract_enum(desc):
         if 2 <= len(vals) <= 12:
             new_desc = d[:m.start()].strip()
             if meanings:
-                lines = [f"{k} \u2014 {v}" for k, v in meanings.items()]
-                new_desc = ((new_desc + '\n') if new_desc else '') + '\n'.join(lines)
+                lines = [f"- {k} \u2014 {v}" for k, v in meanings.items()]
+                new_desc = ((new_desc + '\n\n') if new_desc else '') + '\n'.join(lines)
             return vals, new_desc
     m = re.search(r'(?:Allowed|Available) values:\s*([^\n.]+)', d, flags=re.I)
     if m:
@@ -90,8 +90,8 @@ def extract_enum(desc):
                 vals.append(c); meanings[c] = mng.strip()
         if 2 <= len(vals) <= 12:
             prefix = re.split(r'\n\s*[A-Z]\s*=', d)[0].strip()
-            lines = [f"{k} \u2014 {v}" for k, v in meanings.items()]
-            return vals, ((prefix + '\n') if prefix else '') + '\n'.join(lines)
+            lines = [f"- {k} \u2014 {v}" for k, v in meanings.items()]
+            return vals, ((prefix + '\n\n') if prefix else '') + '\n'.join(lines)
     words = re.findall(r'(?:^|\n)\s*([A-Z][A-Za-z_0-9]+):\s+([^\n]+)', d)
     if len(words) >= 2:
         vals, meanings = [], {}
@@ -101,8 +101,8 @@ def extract_enum(desc):
                 vals.append(w); meanings[w] = mng.strip()
         if 2 <= len(vals) <= 12:
             prefix = re.split(r'\n?\s*[A-Z][A-Za-z_0-9]+:\s', d)[0].strip()
-            lines = [f"{k} \u2014 {v}" for k, v in meanings.items()]
-            return vals, ((prefix + '\n') if prefix else '') + '\n'.join(lines)
+            lines = [f"- {k} \u2014 {v}" for k, v in meanings.items()]
+            return vals, ((prefix + '\n\n') if prefix else '') + '\n'.join(lines)
     return None, desc
 
 def bounded_int_pattern(n):
@@ -347,7 +347,7 @@ def build_lookup_enums(instr_desc):
                     if code not in vals:
                         vals.append(code); lines.append(f"{code} \u2014 {name}")
             comps['InstrumentCategory'] = {"type": "string", "enum": vals,
-                "description": "Instrument category.\n" + "\n".join(lines)}
+                "description": "Instrument category:\n\n" + "\n".join(f"- {l}" for l in lines)}
         elif len(h) >= 3 and h[0] == 'category' and 'subcategory api' in h[-1]:
             vals, lines = [], []
             for r in t['rows']:
@@ -358,7 +358,7 @@ def build_lookup_enums(instr_desc):
                         if code not in vals: vals.append(code)
                         lines.append(f"{code} \u2014 {name} (category: {cat})")
             comps['InstrumentSubCategory'] = {"type": "string", "enum": vals,
-                "description": "Instrument sub category. Valid values depend on the selected category:\n" + "\n".join(lines)}
+                "description": "Instrument sub category. Valid values depend on the selected category:\n\n" + "\n".join(f"- {l}" for l in lines)}
         elif len(h) >= 4 and h[0] == 'category' and 'underlyingassets api' in h[-1]:
             vals, seen_pairs, lines = [], set(), []
             for r in t['rows']:
@@ -370,7 +370,7 @@ def build_lookup_enums(instr_desc):
                         if (code, name) not in seen_pairs:
                             seen_pairs.add((code, name)); lines.append(f"{code} \u2014 {name}")
             comps['InstrumentUnderlyingAssets'] = {"type": "string", "enum": vals,
-                "description": "Instrument underlying assets type. Applicability depends on category/subCategory:\n" + "\n".join(lines)}
+                "description": "Instrument underlying assets type. Applicability depends on category/subCategory:\n\n" + "\n".join(f"- {l}" for l in lines)}
     return comps
 
 def url_to_path_g(url):
